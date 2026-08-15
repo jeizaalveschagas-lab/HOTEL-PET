@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Pet - Reservas</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="pagina">
+
+        <div class="sidebar">
+            <h1 class="logo"><a href="reservas.html">Hotel Pet</a></h1>
+            <div>
+                <ul>
+                    <li><a href="pets.html">Pet</a></li>
+                    <li><a href="usuarios.html">Usuários</a></li>
+                    <li><a href="configuracoes.html">Configurações</a></li>
+                    <li><a href="reservas.html" class="ativo">Reservas</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="conteudo">
+
+            <div class="topo">
+                <div class="perfil">
+                    <img src="img/perfil.png" alt="Foto de perfil">
+                    <span>João da Silva</span>
+                </div>
+            </div>
+
+            <div class="breadcrumb">Home / Reservas</div>
+
+            <div class="main">
+                <h2>Reservas</h2>
+
+                <a href="fazer-reserva.html" class="botao-novo">+ Nova reserva</a>
+
+                <form class="filtros">
+                    <div>
+                        <label for="id">Id</label>
+                        <input type="text" id="id" name="id">
+                    </div>
+                    <div>
+                        <label for="periodo-de">período</label>
+                        <input type="date" id="periodo-de" name="periodo-de">
+                        <input type="date" id="periodo-ate" name="periodo-ate">
+                    </div>
+                    <div>
+                        <label for="proprietario">proprietário</label>
+                        <input type="text" id="proprietario" name="proprietario">
+                    </div>
+                    <div>
+                        <label for="total-de">Total</label>
+                        <input type="text" id="total-de" name="total-de" placeholder="R$ 0,00">
+                        <input type="text" id="total-ate" name="total-ate" placeholder="R$ 0,00">
+                    </div>
+                    <div>
+                        <label for="status">status</label>
+                        <select id="status" name="status">
+                            <option value="">Todos</option>
+                            <option value="reservado">Reservado</option>
+                            <option value="em-andamento">Em andamento</option>
+                            <option value="finalizado">Finalizado</option>
+                            <option value="cancelado">Cancelado</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="pet">pet</label>
+                        <input type="text" id="pet" name="pet">
+                    </div>
+                    <button type="submit">Pesquisar</button>
+                    <button type="reset">Limpar</button>
+                </form>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Pet</th>
+                            <th>chegada</th>
+                            <th>partida</th>
+                            <th>status</th>
+                            <th>total</th>
+                            <th>ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>12349984501</td>
+                            <td>Max</td>
+                            <td>02/05/2021</td>
+                            <td>07/05/2021</td>
+                            <td>Reservado</td>
+                            <td>R$ 40,00</td>
+                            <td><a href="editar-reserva.html">Editar</a> <a href="ver-reserva.html">Visualizar</a></td>
+                        </tr>
+                        <tr>
+                            <td>12349984501</td>
+                            <td>Ginger</td>
+                            <td>02/05/2021</td>
+                            <td>07/05/2020</td>
+                            <td>Em progresso</td>
+                            <td>R$ 40,00</td>
+                            <td><a href="editar-reserva.html">Editar</a> <a href="ver-reserva.html">Visualizar</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

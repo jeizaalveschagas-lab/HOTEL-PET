@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Pet - Usuários</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="pagina">
+
+        <div class="sidebar">
+            <h1 class="logo"><a href="reservas.html">Hotel Pet</a></h1>
+            <div>
+                <ul>
+                    <li><a href="pets.html">Pet</a></li>
+                    <li><a href="usuarios.html" class="ativo">Usuários</a></li>
+                    <li><a href="configuracoes.html">Configurações</a></li>
+                    <li><a href="reservas.html">Reservas</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="conteudo">
+
+            <div class="topo">
+                <div class="perfil">
+                    <img src="img/perfil.png" alt="Foto de perfil">
+                    <span>João da Silva</span>
+                </div>
+            </div>
+
+            <div class="breadcrumb">Home / Usuários</div>
+
+            <div class="main">
+                <h2>Usuários</h2>
+
+                <div class="acoes-usuarios">
+                    <button type="button">Ativo</button>
+                    <button type="button">Remover</button>
+                    <button type="button">Mudar status</button>
+                </div>
+
+                <div class="visualizar-por">
+                    Visualizar Por:
+                    <a href="#" class="ativo">Usuários</a>
+                    <a href="#">Função</a>
+                </div>
+
+                <form class="filtros">
+                    <div>
+                        <label for="id">Id</label>
+                        <input type="text" id="id" name="id">
+                    </div>
+                    <div>
+                        <label for="criado-em">criado em</label>
+                        <input type="date" id="criado-em" name="criado-em">
+                        <input type="date" id="criado-ate" name="criado-ate">
+                    </div>
+                    <div>
+                        <label for="email">email</label>
+                        <input type="email" id="email" name="email">
+                    </div>
+                    <div>
+                        <label for="nome">nome</label>
+                        <input type="text" id="nome" name="nome">
+                    </div>
+                    <div>
+                        <label for="status">status</label>
+                        <select id="status" name="status">
+                            <option value="">Todos</option>
+                            <option value="ativo">Ativo</option>
+                            <option value="inativo">Inativo</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="funcao">função</label>
+                        <select id="funcao" name="funcao">
+                            <option value="">Todas</option>
+                            <option value="cliente">Cliente</option>
+                            <option value="funcionario">Funcionário</option>
+                            <option value="gerente">Gerente</option>
+                        </select>
+                    </div>
+                    <button type="submit">Pesquisar</button>
+                    <button type="reset">Limpar</button>
+                </form>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Foto</th>
+                            <th>email</th>
+                            <th>nome</th>
+                            <th>função</th>
+                            <th>status</th>
+                            <th>criado em</th>
+                            <th>ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td><img src="img/usuario-1.jpg" alt="Foto de José da Silva" class="miniatura"></td>
+                            <td>josedasilva@pet.com</td>
+                            <td>José da Silva</td>
+                            <td>Gerente</td>
+                            <td>Ativo</td>
+                            <td>19/02/2020</td>
+                            <td><a href="cadastrar-usuario.html">Editar</a> <a href="editar-perfil.html">Visualizar</a></td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td><img src="img/usuario-2.jpg" alt="Foto de Maria da Silva" class="miniatura"></td>
+                            <td>maria@pet.com</td>
+                            <td>Maria da Silva</td>
+                            <td>Funcionário</td>
+                            <td>Ativo</td>
+                            <td>19/02/2020</td>
+                            <td><a href="cadastrar-usuario.html">Editar</a> <a href="editar-perfil.html">Visualizar</a></td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td><img src="img/usuario-3.jpg" alt="Foto de José da Silva" class="miniatura"></td>
+                            <td>josedasilva@pet.com</td>
+                            <td>José da Silva</td>
+                            <td>Cliente</td>
+                            <td>Ativo</td>
+                            <td>19/02/2020</td>
+                            <td><a href="cadastrar-usuario.html">Editar</a> <a href="editar-perfil.html">Visualizar</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

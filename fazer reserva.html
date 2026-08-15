@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Pet - Fazer Reserva</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="pagina">
+
+        <div class="sidebar">
+            <h1 class="logo"><a href="reservas.html">Hotel Pet</a></h1>
+            <div>
+                <ul>
+                    <li><a href="pets.html">Pet</a></li>
+                    <li><a href="usuarios.html">Usuários</a></li>
+                    <li><a href="configuracoes.html">Configurações</a></li>
+                    <li><a href="reservas.html" class="ativo">Reservas</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="conteudo">
+
+            <div class="topo">
+                <div class="perfil">
+                    <img src="img/perfil.png" alt="Foto de perfil">
+                    <span>João da Silva</span>
+                </div>
+            </div>
+
+            <div class="breadcrumb">Home / reservas / nova reserva</div>
+
+            <div class="main">
+                <h2>Fazer reserva</h2>
+
+                <form action="reservas.html" method="get">
+
+                    <label for="pet">Pet *</label>
+                    <input type="text" id="pet" name="pet" placeholder="Max" required>
+
+                    <label for="periodo-de">Período *</label>
+                    <input type="date" id="periodo-de" name="periodo-de" required>
+                    <input type="date" id="periodo-ate" name="periodo-ate" required>
+
+                    <label for="notas">Notas</label>
+                    <textarea id="notas" name="notas" placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit."></textarea>
+
+                    <p class="total">Total das diárias: <strong>R$ 40,00</strong></p>
+
+                    <button type="submit">Salvar</button>
+                    <button type="reset">Limpar</button>
+
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>
