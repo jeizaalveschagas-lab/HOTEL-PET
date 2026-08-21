@@ -1,0 +1,516 @@
+/* ==========================================================
+   Hotel Pet - style.css
+   Paleta: tons terrosos/quentes (tema pet-friendly e aconchegante)
+   ========================================================== */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --cor-principal: #d97b4f;      /* laranja terracota - botões e destaques */
+  --cor-principal-escura: #b8603a;
+  --cor-secundaria: #2f4858;     /* azul petróleo - sidebar */
+  --cor-secundaria-clara: #3d5c6f;
+  --cor-fundo: #faf5f0;          /* creme claro - fundo geral */
+  --cor-card: #ffffff;
+  --cor-texto: #333333;
+  --cor-texto-claro: #ffffff;
+  --cor-borda: #e0d8cf;
+  --cor-status-ok: #4c8c5a;
+  --cor-status-alerta: #c9a227;
+  --cor-status-cancelado: #b34747;
+}
+
+body {
+  font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+  background-color: var(--cor-fundo);
+  color: var(--cor-texto);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+a {
+  color: var(--cor-principal);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+h2 {
+  color: var(--cor-secundaria);
+  margin-bottom: 20px;
+  font-size: 22px;
+}
+
+/* ==========================================================
+   Layout geral (todas as telas internas, exceto login/criar conta)
+   ========================================================== */
+
+.pagina {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ---------- Sidebar ---------- */
+
+.sidebar {
+  width: 220px;
+  background-color: var(--cor-secundaria);
+  color: var(--cor-texto-claro);
+  display: flex;
+  flex-direction: column;
+  padding: 24px 0;
+  flex-shrink: 0;
+}
+
+.sidebar .logo {
+  color: var(--cor-texto-claro);
+  font-size: 22px;
+  text-align: center;
+  margin-bottom: 30px;
+  padding: 0 16px;
+}
+
+.sidebar .logo a {
+  color: var(--cor-texto-claro);
+  text-decoration: none;
+}
+
+.sidebar ul {
+  list-style: none;
+}
+
+.sidebar ul li a {
+  display: block;
+  color: #d9e2e8;
+  padding: 14px 24px;
+  font-size: 15px;
+  border-left: 4px solid transparent;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.sidebar ul li a:hover {
+  background-color: var(--cor-secundaria-clara);
+  text-decoration: none;
+}
+
+.sidebar ul li a.ativo {
+  background-color: var(--cor-secundaria-clara);
+  border-left-color: var(--cor-principal);
+  color: var(--cor-texto-claro);
+  font-weight: bold;
+}
+
+/* ---------- Conteúdo principal ---------- */
+
+.conteudo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.topo {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 16px 32px;
+  background-color: var(--cor-card);
+  border-bottom: 1px solid var(--cor-borda);
+}
+
+.perfil {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.perfil img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--cor-principal);
+}
+
+.perfil span {
+  font-weight: 600;
+  color: var(--cor-secundaria);
+}
+
+.breadcrumb {
+  padding: 12px 32px;
+  font-size: 13px;
+  color: #8a8a8a;
+}
+
+.main {
+  padding: 8px 32px 40px;
+  flex: 1;
+}
+
+/* ==========================================================
+   Botões
+   ========================================================== */
+
+button,
+.botao-novo,
+.botao-secundario {
+  display: inline-block;
+  background-color: var(--cor-principal);
+  color: var(--cor-texto-claro);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button:hover,
+.botao-novo:hover,
+.botao-secundario:hover {
+  background-color: var(--cor-principal-escura);
+  text-decoration: none;
+}
+
+button[type="reset"] {
+  background-color: transparent;
+  color: var(--cor-secundaria);
+  border: 1px solid var(--cor-borda);
+}
+
+button[type="reset"]:hover {
+  background-color: #f0e9e2;
+}
+
+.botao-novo {
+  margin-bottom: 20px;
+}
+
+.acoes-usuarios {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.acoes-usuarios button {
+  background-color: var(--cor-secundaria);
+}
+
+.acoes-usuarios button:hover {
+  background-color: var(--cor-secundaria-clara);
+}
+
+/* ==========================================================
+   Formulários
+   ========================================================== */
+
+form {
+  background-color: var(--cor-card);
+  padding: 24px;
+  border-radius: 10px;
+  border: 1px solid var(--cor-borda);
+  margin-bottom: 24px;
+}
+
+form label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cor-secundaria);
+  margin-top: 14px;
+  margin-bottom: 4px;
+  text-transform: capitalize;
+}
+
+form input[type="text"],
+form input[type="email"],
+form input[type="password"],
+form input[type="date"],
+form input[type="number"],
+form input[type="file"],
+form select,
+form textarea {
+  width: 100%;
+  max-width: 420px;
+  padding: 9px 12px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--cor-texto);
+  background-color: #fffefd;
+}
+
+form input:focus,
+form select:focus,
+form textarea:focus {
+  outline: none;
+  border-color: var(--cor-principal);
+}
+
+form textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+form button {
+  margin-top: 20px;
+  margin-right: 10px;
+}
+
+.total {
+  margin-top: 16px;
+  font-size: 15px;
+}
+
+.total strong {
+  color: var(--cor-principal-escura);
+}
+
+/* ---------- Formulário de filtros (listas: reservas, pets, usuários) ---------- */
+
+form.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px;
+  padding: 20px;
+}
+
+form.filtros > div {
+  display: flex;
+  flex-direction: column;
+  min-width: 140px;
+}
+
+form.filtros label {
+  margin-top: 0;
+}
+
+form.filtros input,
+form.filtros select {
+  max-width: none;
+}
+
+form.filtros button {
+  margin-top: 0;
+  height: 38px;
+}
+
+.visualizar-por {
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: var(--cor-secundaria);
+}
+
+.visualizar-por a {
+  margin-left: 10px;
+  color: #8a8a8a;
+}
+
+.visualizar-por a.ativo {
+  color: var(--cor-principal);
+  font-weight: 600;
+}
+
+/* ==========================================================
+   Tabelas
+   ========================================================== */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--cor-card);
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--cor-borda);
+}
+
+thead {
+  background-color: var(--cor-secundaria);
+}
+
+thead th {
+  color: var(--cor-texto-claro);
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+tbody tr {
+  border-bottom: 1px solid var(--cor-borda);
+}
+
+tbody tr:nth-child(even) {
+  background-color: #fbf7f3;
+}
+
+tbody tr:hover {
+  background-color: #f5ece3;
+}
+
+tbody td {
+  padding: 12px 16px;
+  font-size: 14px;
+}
+
+tbody td a {
+  margin-right: 10px;
+  font-weight: 600;
+}
+
+.miniatura {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* ==========================================================
+   Tela de Login / Criar Conta
+   ========================================================== */
+
+.login-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.login-imagem {
+  flex: 1;
+  background-color: var(--cor-secundaria);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-imagem img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.login-formulario {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  background-color: var(--cor-fundo);
+}
+
+.login-formulario .logo {
+  color: var(--cor-principal);
+  font-size: 32px;
+  margin-bottom: 24px;
+}
+
+.login-formulario form {
+  width: 100%;
+  max-width: 360px;
+  border: none;
+  padding: 0;
+  background: transparent;
+}
+
+.login-formulario input {
+  max-width: none;
+}
+
+.linha-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 14px 0;
+  font-size: 13px;
+}
+
+.linha-checkbox label {
+  margin: 0;
+  font-weight: normal;
+  text-transform: none;
+  color: var(--cor-texto);
+}
+
+.linha-checkbox a {
+  margin-left: auto;
+  font-size: 13px;
+}
+
+.login-formulario button[type="submit"] {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.divisor {
+  text-align: center;
+  color: #a8a8a8;
+  margin: 20px 0;
+  font-size: 13px;
+}
+
+.icones-sociais {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.icones-sociais img {
+  width: 32px;
+  height: 32px;
+}
+
+.link-criar-conta {
+  display: block;
+  text-align: center;
+  font-size: 14px;
+}
+
+/* ==========================================================
+   Responsivo (telas menores)
+   ========================================================== */
+
+@media (max-width: 900px) {
+  .pagina {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 12px 0;
+  }
+
+  .sidebar .logo {
+    margin-bottom: 0;
+    padding: 0 16px;
+  }
+
+  .sidebar ul {
+    display: flex;
+  }
+
+  .login-container {
+    flex-direction: column;
+  }
+
+  .login-imagem {
+    min-height: 200px;
+  }
+
+  form.filtros {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
