@@ -144,6 +144,42 @@ const Regras = {
     }
 };
 
+// ---------- Tabelas: avisos de busca e contador de resultados ----------
+
+const Tabela = {
+    // Aviso (erro de filtro) logo acima do formulário de filtros
+    mostrarAviso(form, mensagem) {
+        let p = form.previousElementSibling;
+        if (!(p && p.classList.contains('mensagem-erro'))) {
+            p = document.createElement('p');
+            p.className = 'mensagem-erro';
+            p.setAttribute('role', 'alert');
+            p.style.cssText = 'color:#c00;margin-bottom:12px';
+            form.before(p);
+        }
+        p.textContent = mensagem;
+    },
+
+    limparAviso(form) {
+        const p = form.previousElementSibling;
+        if (p && p.classList.contains('mensagem-erro')) p.remove();
+    },
+
+    // "3 resultados" / "1 resultado" / "Nenhum resultado" logo acima da tabela
+    mostrarContagem(tabela, quantidade) {
+        let p = tabela.previousElementSibling;
+        if (!(p && p.classList.contains('resultado-busca'))) {
+            p = document.createElement('p');
+            p.className = 'resultado-busca';
+            p.setAttribute('aria-live', 'polite');
+            p.style.cssText = 'margin-bottom:8px;font-size:13px;color:#8a8a8a';
+            tabela.before(p);
+        }
+        p.textContent = quantidade === 0 ? 'Nenhum resultado'
+            : `${quantidade} resultado${quantidade === 1 ? '' : 's'}`;
+    }
+};
+
 // ---------- Página atual, login e navegação (menu, breadcrumb, topo) ----------
 
 const Pagina = (() => {
