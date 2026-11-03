@@ -48,12 +48,25 @@
                         <input type="text" id="nome" name="nome">
                     </div>
                     <div>
+                        <label for="tipo">tipo</label>
+                        <select id="tipo" name="tipo">
+                            <option value="">Todos</option>
+                            <option value="cachorro">Cachorro</option>
+                            <option value="gato">Gato</option>
+                            <option value="outro">Outro</option>
+                        </select>
+                    </div>
+                    <div>
                         <label for="raca">raça</label>
                         <input type="text" id="raca" name="raca">
                     </div>
                     <div>
                         <label for="tamanho">tamanho</label>
                         <input type="text" id="tamanho" name="tamanho">
+                    </div>
+                    <div>
+                        <label for="proprietario">proprietário</label>
+                        <input type="text" id="proprietario" name="proprietario">
                     </div>
                     <button type="submit">Pesquisar</button>
                     <button type="reset">Limpar</button>
@@ -67,6 +80,7 @@
                             <th>tipo</th>
                             <th>raça</th>
                             <th>tamanho</th>
+                            <th>proprietário</th>
                             <th>ações</th>
                         </tr>
                     </thead>

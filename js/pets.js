@@ -35,24 +35,34 @@
 
     function telaListagem() {
         const form = document.querySelector('form.filtros');
-        const corpo = document.querySelector('table tbody');
+        const tabela = document.querySelector('table');
+        const corpo = tabela.querySelector('tbody');
         const valor = (nome) => form.elements.namedItem(nome).value.trim();
-
         function desenhar() {
             const id = valor('id');
             const nome = Util.normalizar(valor('nome'));
+            const tipo = valor('tipo');
             const raca = Util.normalizar(valor('raca'));
             const tamanho = Util.normalizar(valor('tamanho'));
+            const dono = Util.normalizar(valor('proprietario'));
 
-            const lista = BD.pets.listar().filter((p) =>
+            const pets = BD.pets.listar().map((p) => {
+                const proprietario = BD.usuarios.obter(p.proprietarioId);
+                return { ...p, proprietarioNome: proprietario ? Util.nomeCompleto(proprietario) : '—' };
+            });
+
+            const lista = pets.filter((p) =>
                 (!id || p.id.includes(id)) &&
                 (!nome || Util.normalizar(p.nome).includes(nome)) &&
+                (!tipo || p.tipo === tipo) &&
                 (!raca || Util.normalizar(p.raca).includes(raca)) &&
-                (!tamanho || Util.normalizar(Regras.TAMANHOS[p.tamanho] || p.tamanho).includes(tamanho))
+                (!tamanho || Util.normalizar(Regras.TAMANHOS[p.tamanho] || p.tamanho).includes(tamanho)) &&
+                (!dono || Util.normalizar(p.proprietarioNome).includes(dono))
             );
 
+            Tabela.mostrarContagem(tabela, lista.length);
             if (lista.length === 0) {
-                corpo.innerHTML = '<tr><td colspan="6">Nenhum pet encontrado.</td></tr>';
+                corpo.innerHTML = '<tr><td colspan="7">Nenhum pet encontrado.</td></tr>';
                 return;
             }
             corpo.innerHTML = lista.map((p) => `
@@ -62,6 +72,7 @@
                     <td>${Regras.TIPOS[p.tipo] || Util.esc(p.tipo)}</td>
                     <td>${Util.esc(p.raca)}</td>
                     <td>${Regras.TAMANHOS[p.tamanho] || Util.esc(p.tamanho)}</td>
+                    <td>${Util.esc(p.proprietarioNome)}</td>
                     <td>
                         <a href="editar-pet.html?id=${encodeURIComponent(p.id)}">Editar</a>
                         <a href="visualizar-pet.html?id=${encodeURIComponent(p.id)}">Visualizar</a>
