@@ -31,10 +31,19 @@
 
     function telaListagem() {
         const form = document.querySelector('form.filtros');
-        const corpo = document.querySelector('table tbody');
+        const tabela = document.querySelector('table');
+        const corpo = tabela.querySelector('tbody');
+        const linksModo = document.querySelectorAll('.visualizar-por a');
         const valor = (nome) => form.elements.namedItem(nome).value.trim();
+        let modo = 'usuarios'; // 'usuarios' = lista simples | 'funcao' = agrupada por função
 
-        function desenhar() {
+        function validarFiltros() {
+            const de = valor('criado-em');
+            const ate = valor('criado-ate');
+            return de && ate && de > ate ? 'Em "criado em", a data inicial não pode ser depois da final.' : null;
+        }
+
+        function filtrar(lista) {
             const id = valor('id');
             const de = valor('criado-em');
             const ate = valor('criado-ate');
@@ -42,36 +51,65 @@
             const nome = Util.normalizar(valor('nome'));
             const status = valor('status');
             const funcao = valor('funcao');
-
-            const lista = BD.usuarios.listar().filter((u) =>
+            return lista.filter((u) =>
                 (!id || u.id.includes(id)) &&
                 (!de || u.criadoEm >= de) &&
                 (!ate || u.criadoEm <= ate) &&
                 (!email || Util.normalizar(u.email).includes(email)) &&
-                (!nome || Util.normalizar(Util.nomeCompleto(u)).includes(nome)) &&
+                (!nome || Util.normalizar(u.nomeCompleto).includes(nome)) &&
                 (!status || u.status === status) &&
                 (!funcao || u.funcao === funcao)
             );
+        }
+
+        const linha = (u) => `
+            <tr data-id="${Util.esc(u.id)}">
+                <td><input type="checkbox" aria-label="Selecionar ${Util.esc(u.nomeCompleto)}"></td>
+                <td><img src="${Util.esc(u.foto || 'img/perfil.png')}" alt="Foto de ${Util.esc(u.nomeCompleto)}" class="miniatura"></td>
+                <td>${Util.esc(u.email)}</td>
+                <td>${Util.esc(u.nomeCompleto)}</td>
+                <td>${Regras.FUNCOES[u.funcao] || Util.esc(u.funcao)}</td>
+                <td>${Regras.SITUACOES[u.status] || Util.esc(u.status)}</td>
+                <td>${Util.formatarData(u.criadoEm)}</td>
+                <td>
+                    <a href="editar-perfil.html?id=${encodeURIComponent(u.id)}">Editar</a>
+                    <a href="editar-perfil.html?id=${encodeURIComponent(u.id)}&modo=ver">Visualizar</a>
+                </td>
+            </tr>`;
+
+        function desenhar() {
+            const erro = validarFiltros();
+            if (erro) return Tabela.mostrarAviso(form, erro); // mantém a tabela como estava
+            Tabela.limparAviso(form);
+
+            const todos = BD.usuarios.listar().map((u) => ({ ...u, nomeCompleto: Util.nomeCompleto(u) }));
+            const lista = filtrar(todos);
+            Tabela.mostrarContagem(tabela, lista.length);
 
             if (lista.length === 0) {
                 corpo.innerHTML = '<tr><td colspan="8">Nenhum usuário encontrado.</td></tr>';
-                return;
+            } else if (modo === 'funcao') {
+                // agrupa por função, cada grupo com um título
+                corpo.innerHTML = ['gerente', 'funcionario', 'cliente'].map((funcao) => {
+                    const grupo = lista.filter((u) => u.funcao === funcao);
+                    if (grupo.length === 0) return '';
+                    return `<tr class="grupo-funcao"><td colspan="8" style="background:#f0e9e2">` +
+                        `<strong>${Regras.FUNCOES[funcao]}</strong> (${grupo.length})</td></tr>` + grupo.map(linha).join('');
+                }).join('');
+            } else {
+                corpo.innerHTML = lista.map(linha).join('');
             }
-            corpo.innerHTML = lista.map((u) => `
-                <tr data-id="${Util.esc(u.id)}">
-                    <td><input type="checkbox" aria-label="Selecionar ${Util.esc(Util.nomeCompleto(u))}"></td>
-                    <td><img src="${Util.esc(u.foto || 'img/perfil.png')}" alt="Foto de ${Util.esc(Util.nomeCompleto(u))}" class="miniatura"></td>
-                    <td>${Util.esc(u.email)}</td>
-                    <td>${Util.esc(Util.nomeCompleto(u))}</td>
-                    <td>${Regras.FUNCOES[u.funcao] || Util.esc(u.funcao)}</td>
-                    <td>${Regras.SITUACOES[u.status] || Util.esc(u.status)}</td>
-                    <td>${Util.formatarData(u.criadoEm)}</td>
-                    <td>
-                        <a href="editar-perfil.html?id=${encodeURIComponent(u.id)}">Editar</a>
-                        <a href="editar-perfil.html?id=${encodeURIComponent(u.id)}&modo=ver">Visualizar</a>
-                    </td>
-                </tr>`).join('');
         }
+
+        // ---- Visualizar por: Usuários | Função ----
+        linksModo.forEach((link) => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                modo = Util.normalizar(link.textContent) === 'funcao' ? 'funcao' : 'usuarios';
+                linksModo.forEach((outro) => outro.classList.toggle('ativo', outro === link));
+                desenhar();
+            });
+        });
 
         form.addEventListener('submit', (e) => { e.preventDefault(); desenhar(); });
         form.addEventListener('reset', () => setTimeout(desenhar, 0));
