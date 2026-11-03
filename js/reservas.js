@@ -87,11 +87,23 @@
 
     function telaListagem() {
         const form = document.querySelector('form.filtros');
-        const corpo = document.querySelector('table tbody');
-        const cabecalhos = document.querySelectorAll('table thead th');
+        const tabela = document.querySelector('table');
+        const corpo = tabela.querySelector('tbody');
+        const cabecalhos = tabela.querySelectorAll('thead th');
         const colunas = ['id', 'pet', 'chegada', 'partida', 'status', 'total']; // a última coluna (ações) não ordena
         const valor = (nome) => form.elements.namedItem(nome).value.trim();
         let ordem = { chave: null, direcao: 1 };
+
+        // devolve a mensagem de erro dos filtros, ou null se estão coerentes
+        function validarFiltros() {
+            const de = valor('periodo-de');
+            const ate = valor('periodo-ate');
+            if (de && ate && de > ate) return 'No período, a data inicial não pode ser depois da final.';
+            const minimo = Util.paraNumero(valor('total-de'));
+            const maximo = Util.paraNumero(valor('total-ate'));
+            if (minimo !== null && maximo !== null && minimo > maximo) return 'No total, o valor inicial não pode ser maior que o final.';
+            return null;
+        }
 
         function filtrar(lista) {
             const de = valor('periodo-de');
@@ -130,7 +142,12 @@
         }
 
         function desenhar() {
+            const erro = validarFiltros();
+            if (erro) return Tabela.mostrarAviso(form, erro); // mantém a tabela como estava
+            Tabela.limparAviso(form);
+
             const lista = ordenar(filtrar(BD.reservas.listar().map(enriquecer)));
+            Tabela.mostrarContagem(tabela, lista.length);
             if (lista.length === 0) {
                 corpo.innerHTML = '<tr><td colspan="7">Nenhuma reserva encontrada.</td></tr>';
                 return;
