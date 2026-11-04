@@ -89,10 +89,9 @@
         const form = document.querySelector('form.filtros');
         const tabela = document.querySelector('table');
         const corpo = tabela.querySelector('tbody');
-        const cabecalhos = tabela.querySelectorAll('thead th');
         const colunas = ['id', 'pet', 'chegada', 'partida', 'status', 'total']; // a última coluna (ações) não ordena
         const valor = (nome) => form.elements.namedItem(nome).value.trim();
-        let ordem = { chave: null, direcao: 1 };
+        const ordem = Tabela.ligarOrdenacao(tabela.querySelectorAll('thead th'), colunas, desenhar);
 
         // devolve a mensagem de erro dos filtros, ou null se estão coerentes
         function validarFiltros() {
@@ -128,25 +127,12 @@
             );
         }
 
-        function ordenar(lista) {
-            if (!ordem.chave) return lista;
-            const { chave, direcao } = ordem;
-            return [...lista].sort((a, b) => {
-                const x = a[chave];
-                const y = b[chave];
-                const resultado = typeof x === 'number'
-                    ? x - y
-                    : String(x).localeCompare(String(y), 'pt-BR', { numeric: true });
-                return resultado * direcao;
-            });
-        }
-
         function desenhar() {
             const erro = validarFiltros();
             if (erro) return Tabela.mostrarAviso(form, erro); // mantém a tabela como estava
             Tabela.limparAviso(form);
 
-            const lista = ordenar(filtrar(BD.reservas.listar().map(enriquecer)));
+            const lista = Tabela.ordenar(filtrar(BD.reservas.listar().map(enriquecer)), ordem);
             Tabela.mostrarContagem(tabela, lista.length);
             if (lista.length === 0) {
                 corpo.innerHTML = '<tr><td colspan="7">Nenhuma reserva encontrada.</td></tr>';
@@ -166,29 +152,6 @@
                     </td>
                 </tr>`).join('');
         }
-
-        function marcarSetas() {
-            cabecalhos.forEach((th, i) => {
-                const antiga = th.querySelector('.seta');
-                if (antiga) antiga.remove();
-                if (colunas[i] && colunas[i] === ordem.chave) {
-                    const seta = document.createElement('span');
-                    seta.className = 'seta';
-                    seta.textContent = ordem.direcao === 1 ? ' ▲' : ' ▼';
-                    th.append(seta);
-                }
-            });
-        }
-
-        cabecalhos.forEach((th, i) => {
-            if (!colunas[i]) return;
-            th.style.cursor = 'pointer';
-            th.addEventListener('click', () => {
-                ordem = { chave: colunas[i], direcao: ordem.chave === colunas[i] ? -ordem.direcao : 1 };
-                marcarSetas();
-                desenhar();
-            });
-        });
 
         form.addEventListener('submit', (e) => { e.preventDefault(); desenhar(); });
         // o "reset" limpa os campos depois deste evento, então redesenha logo em seguida
