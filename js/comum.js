@@ -144,9 +144,56 @@ const Regras = {
     }
 };
 
-// ---------- Tabelas: avisos de busca e contador de resultados ----------
+// ---------- Tabelas: ordenação, avisos de busca e contador de resultados ----------
 
 const Tabela = {
+    // Deixa os cabeçalhos clicáveis para ordenar. `colunas` tem uma chave por <th>
+    // (null = coluna que não ordena). Devolve o objeto `ordem`, que muda a cada clique;
+    // `aoMudar` é chamado para redesenhar a tabela.
+    ligarOrdenacao(cabecalhos, colunas, aoMudar) {
+        const ordem = { chave: null, direcao: 1 };
+
+        const marcar = () => cabecalhos.forEach((th, i) => {
+            const antiga = th.querySelector('.seta');
+            if (antiga) antiga.remove();
+            if (!colunas[i]) return;
+            const ativa = colunas[i] === ordem.chave;
+            th.setAttribute('aria-sort', ativa ? (ordem.direcao === 1 ? 'ascending' : 'descending') : 'none');
+            if (ativa) {
+                const seta = document.createElement('span');
+                seta.className = 'seta';
+                seta.textContent = ordem.direcao === 1 ? ' ▲' : ' ▼';
+                th.append(seta);
+            }
+        });
+
+        cabecalhos.forEach((th, i) => {
+            if (!colunas[i]) return;
+            th.style.cursor = 'pointer';
+            th.addEventListener('click', () => {
+                ordem.direcao = ordem.chave === colunas[i] ? -ordem.direcao : 1;
+                ordem.chave = colunas[i];
+                marcar();
+                aoMudar();
+            });
+        });
+        return ordem;
+    },
+
+    // Ordena uma cópia da lista. `valorDe(item, chave)` permite ordenar por outro valor
+    // (ex.: tamanho Pequeno < Médio < Grande em vez de ordem alfabética).
+    ordenar(lista, ordem, valorDe = (item, chave) => item[chave]) {
+        if (!ordem.chave) return lista;
+        return [...lista].sort((a, b) => {
+            const x = valorDe(a, ordem.chave);
+            const y = valorDe(b, ordem.chave);
+            const resultado = typeof x === 'number' && typeof y === 'number'
+                ? x - y
+                : String(x).localeCompare(String(y), 'pt-BR', { numeric: true });
+            return resultado * ordem.direcao;
+        });
+    },
+
     // Aviso (erro de filtro) logo acima do formulário de filtros
     mostrarAviso(form, mensagem) {
         let p = form.previousElementSibling;
