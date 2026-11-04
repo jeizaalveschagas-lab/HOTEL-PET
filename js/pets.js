@@ -38,6 +38,13 @@
         const tabela = document.querySelector('table');
         const corpo = tabela.querySelector('tbody');
         const valor = (nome) => form.elements.namedItem(nome).value.trim();
+        const colunas = ['id', 'nome', 'tipo', 'raca', 'tamanho', 'proprietarioNome']; // a última coluna (ações) não ordena
+        const ORDEM_TAMANHO = { pequeno: 1, medio: 2, grande: 3 };
+        const ordem = Tabela.ligarOrdenacao(tabela.querySelectorAll('thead th'), colunas, desenhar);
+
+        // tamanho ordena de Pequeno a Grande (e não em ordem alfabética)
+        const valorDe = (pet, chave) => chave === 'tamanho' ? (ORDEM_TAMANHO[pet.tamanho] || 0) : pet[chave];
+
         function desenhar() {
             const id = valor('id');
             const nome = Util.normalizar(valor('nome'));
@@ -51,14 +58,14 @@
                 return { ...p, proprietarioNome: proprietario ? Util.nomeCompleto(proprietario) : '—' };
             });
 
-            const lista = pets.filter((p) =>
+            const lista = Tabela.ordenar(pets.filter((p) =>
                 (!id || p.id.includes(id)) &&
                 (!nome || Util.normalizar(p.nome).includes(nome)) &&
                 (!tipo || p.tipo === tipo) &&
                 (!raca || Util.normalizar(p.raca).includes(raca)) &&
                 (!tamanho || Util.normalizar(Regras.TAMANHOS[p.tamanho] || p.tamanho).includes(tamanho)) &&
                 (!dono || Util.normalizar(p.proprietarioNome).includes(dono))
-            );
+            ), ordem, valorDe);
 
             Tabela.mostrarContagem(tabela, lista.length);
             if (lista.length === 0) {
