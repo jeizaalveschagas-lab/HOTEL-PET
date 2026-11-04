@@ -29,13 +29,45 @@
 
     // ---------- usuarios.html ----------
 
+    // Depois de remover ou inativar `idSaindo`, ainda sobra algum gerente ativo?
+    function restaGerenteAtivo(idSaindo) {
+        return BD.usuarios.listar().some(
+            (u) => u.id !== idSaindo && u.funcao === 'gerente' && u.status === 'ativo'
+        );
+    }
+
     function telaListagem() {
         const form = document.querySelector('form.filtros');
         const tabela = document.querySelector('table');
         const corpo = tabela.querySelector('tbody');
+        const cabecalhos = tabela.querySelectorAll('thead th');
+        const barraAcoes = document.querySelector('.acoes-usuarios');
         const linksModo = document.querySelectorAll('.visualizar-por a');
         const valor = (nome) => form.elements.namedItem(nome).value.trim();
+        // colunas: [seleção, foto, email, nome, função, status, criado em, ações]
+        const colunas = [null, null, 'email', 'nomeCompleto', 'funcao', 'status', 'criadoEm', null];
+        const ordem = Tabela.ligarOrdenacao(cabecalhos, colunas, desenhar);
         let modo = 'usuarios'; // 'usuarios' = lista simples | 'funcao' = agrupada por função
+
+        // caixa no cabeçalho que marca/desmarca todas as linhas
+        const marcarTodos = document.createElement('input');
+        marcarTodos.type = 'checkbox';
+        marcarTodos.setAttribute('aria-label', 'Selecionar todos');
+        cabecalhos[0].append(marcarTodos);
+        marcarTodos.addEventListener('change', () => {
+            corpo.querySelectorAll('input[type="checkbox"]').forEach((c) => { c.checked = marcarTodos.checked; });
+        });
+
+        // mensagem do resultado das ações (Ativo / Remover / Mudar status)
+        const mensagem = document.createElement('p');
+        mensagem.setAttribute('role', 'status');
+        mensagem.style.margin = '0 0 12px';
+        barraAcoes.after(mensagem);
+
+        function avisar(texto, erro) {
+            mensagem.textContent = texto;
+            mensagem.style.color = erro ? '#c00' : '#0a7a2f';
+        }
 
         function validarFiltros() {
             const de = valor('criado-em');
@@ -83,13 +115,14 @@
             Tabela.limparAviso(form);
 
             const todos = BD.usuarios.listar().map((u) => ({ ...u, nomeCompleto: Util.nomeCompleto(u) }));
-            const lista = filtrar(todos);
+            const lista = Tabela.ordenar(filtrar(todos), ordem);
             Tabela.mostrarContagem(tabela, lista.length);
+            marcarTodos.checked = false;
 
             if (lista.length === 0) {
                 corpo.innerHTML = '<tr><td colspan="8">Nenhum usuário encontrado.</td></tr>';
             } else if (modo === 'funcao') {
-                // agrupa por função, cada grupo com um título
+                // agrupa por função, cada grupo com um título (a ordenação vale dentro do grupo)
                 corpo.innerHTML = ['gerente', 'funcionario', 'cliente'].map((funcao) => {
                     const grupo = lista.filter((u) => u.funcao === funcao);
                     if (grupo.length === 0) return '';
@@ -101,6 +134,74 @@
             }
         }
 
+        // ---- ações sobre os usuários marcados ----
+
+        function selecionados() {
+            const marcados = [...corpo.querySelectorAll('tr[data-id] input[type="checkbox"]:checked')]
+                .map((c) => BD.usuarios.obter(c.closest('tr').dataset.id))
+                .filter(Boolean);
+            if (marcados.length === 0) avisar('Marque pelo menos um usuário na tabela.', true);
+            return marcados;
+        }
+
+        function concluir(sucesso, problemas) {
+            desenhar();
+            const texto = [sucesso, ...problemas].filter(Boolean).join(' ');
+            avisar(texto, problemas.length > 0);
+        }
+
+        function ativar() {
+            const marcados = selecionados();
+            if (!marcados.length) return;
+            let alterados = 0;
+            marcados.forEach((u) => {
+                if (u.status !== 'ativo') {
+                    u.status = 'ativo';
+                    if (BD.usuarios.salvar(u)) alterados++;
+                }
+            });
+            concluir(`${alterados} usuário(s) ativado(s).`, []);
+        }
+
+        function mudarStatus() {
+            const marcados = selecionados();
+            if (!marcados.length) return;
+            const problemas = new Set();
+            let alterados = 0;
+            marcados.forEach((u) => {
+                const novo = u.status === 'ativo' ? 'inativo' : 'ativo';
+                if (novo === 'inativo') {
+                    if (u.id === BD.sessao()) { problemas.add('Você não pode inativar o próprio usuário.'); return; }
+                    if (u.funcao === 'gerente' && !restaGerenteAtivo(u.id)) { problemas.add('É preciso manter pelo menos um gerente ativo.'); return; }
+                }
+                u.status = novo;
+                if (BD.usuarios.salvar(u)) alterados++;
+            });
+            concluir(`Status alterado em ${alterados} usuário(s).`, [...problemas]);
+        }
+
+        function remover() {
+            const marcados = selecionados();
+            if (!marcados.length) return;
+            if (!confirm(`Remover ${marcados.length} usuário(s) selecionado(s)?`)) return;
+            const problemas = new Set();
+            let removidos = 0;
+            marcados.forEach((u) => {
+                const nome = Util.nomeCompleto(u);
+                if (u.id === BD.sessao()) { problemas.add('Você não pode remover o próprio usuário.'); return; }
+                if (BD.pets.listar().some((p) => p.proprietarioId === u.id)) { problemas.add(`${nome} tem pets cadastrados.`); return; }
+                if (u.funcao === 'gerente' && u.status === 'ativo' && !restaGerenteAtivo(u.id)) { problemas.add('É preciso manter pelo menos um gerente ativo.'); return; }
+                if (BD.usuarios.remover(u.id)) removidos++;
+            });
+            concluir(`${removidos} usuário(s) removido(s).`, [...problemas]);
+        }
+
+        const acoes = { 'ativo': ativar, 'remover': remover, 'mudar status': mudarStatus };
+        barraAcoes.querySelectorAll('button').forEach((botao) => {
+            const acao = acoes[Util.normalizar(botao.textContent)];
+            if (acao) botao.addEventListener('click', acao);
+        });
+
         // ---- Visualizar por: Usuários | Função ----
         linksModo.forEach((link) => {
             link.addEventListener('click', (e) => {
@@ -111,7 +212,7 @@
             });
         });
 
-        form.addEventListener('submit', (e) => { e.preventDefault(); desenhar(); });
+        form.addEventListener('submit', (e) => { e.preventDefault(); avisar('', false); desenhar(); });
         form.addEventListener('reset', () => setTimeout(desenhar, 0));
         desenhar();
     }
